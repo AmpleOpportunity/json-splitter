@@ -14,41 +14,47 @@ try:
     # request file name
     file_name = input('filename: ')
     f = open(file_name)
-    file_size = os.path.getsize(file_name)
     data = json.load(f)
+    number_of_records = len(data)
     
     if isinstance(data, list):
         data_len = len(data)
         print('Valid JSON file found')
+        print(number_of_records)
     else:
         print("JSON is not an Array of Objects")
+        input("Press any key to exit")
         exit()
 
 except:
-    print('Error loading JSON file ... exiting')
+    print('Error loading JSON file, exiting')
+    input("Press any key to exit")
     exit()
 
 # get numeric input
 try:
-    mb_per_file = abs(float(input('Enter maximum file size (MB): ')))
+    records_per_file = abs(float(input('Enter number of records for each JSON: ')))
 except:
-    print('Error entering maximum file size ... exiting')
+    print('Error entering number of records, exiting')
+    input("Press any key to exit")
     exit()
 
 # check that file is larger than max size
-if file_size < mb_per_file * 1000000:
-    print('File smaller than split size, exiting')
+if records_per_file > number_of_records:
+    print('Less records than split size, exiting')
+    input("Press any key to exit")
     exit()
 
 # determine number of files necessary
-num_files = math.ceil(file_size/(mb_per_file*1000000))
-print('File will be split into',num_files,'equal parts')
+num_files = math.ceil(records_per_file/number_of_records * 100)
+print('File will be split into',num_files,' files.')
+input('Press any key to begin')
 
 # initialize 2D array
 split_data = [[] for i in range(0,num_files)]
 
 # determine indices of cutoffs in array
-starts = [math.floor(i * data_len/num_files) for i in range(0,num_files)]
+starts = [math.floor(i * number_of_records/num_files) for i in range(0,num_files)]
 starts.append(data_len)
 
 # loop through 2D array
@@ -65,3 +71,4 @@ for i in range(0,num_files):
     print('Part',str(i+1),'... completed')
 
 print('Success! Script Completed')
+input('Press any key to exit')
